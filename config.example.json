@@ -1,0 +1,17 @@
+{
+	"localPort": 10808,
+	"addressPort": "443",
+	"userId": "your-uuid-here",
+	"protocol": "vless",
+	"network": "xhttp",
+	"tls": true,
+	"security": "tls",
+	"xhttpMode": "auto",
+	"randomizeSni": false,
+	"wsHeaderHost": "your-server.example.com",
+	"wsHeaderPath": "/your-path",
+	"sni": "your-sni.example.com",
+	"frontingTimeout": 5.0,
+	"nTries": 1,
+	"writer": "csv"
+}

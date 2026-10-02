@@ -1,0 +1,7 @@
+cfscanner-data*/
+result/
+*.log
+*.bak
+*.tmp
+.DS_Store
+/cfscanner

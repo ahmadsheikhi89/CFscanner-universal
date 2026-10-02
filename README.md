@@ -1,222 +1,405 @@
-# CDN IP Scanner - Clean IP Discovery Tool
+<p align="center">
+  <img src="banner.png" alt="CFScanner Universal Banner" width="100%">
+</p>
 
-[![Xray-Core](https://img.shields.io/badge/Xray--Core-v26.2.6-blue)](https://github.com/XTLS/Xray-core)
-[![Go](https://img.shields.io/badge/Go-1.25.7-00ADD8)](https://golang.org/)
-[![License](https://img.shields.io/badge/License-GPL--3.0-green)](LICENSE)
+<h1 align="center">CFScanner Universal</h1>
 
-> **Universal CDN IP Scanner for finding clean and low latency IPs**
+<p align="center">
+  Portable Docker-based Cloudflare IP scanner for
+  <b>VLESS</b>, <b>VMess</b>, and <b>Trojan</b>.
+</p>
 
-This is an enhanced fork of [CFScanner](https://github.com/MortezaBashsiz/CFScanner/tree/main/golang) with significant improvements for performance, usability, and modern transport protocols. While originally designed for Cloudflare, it works effectively with any CDN to discover clean IPs with low latency.
+<p align="center">
+  <a href="https://hub.docker.com/r/ahmadsheikhi/cfscanner">
+    <img src="https://img.shields.io/docker/pulls/ahmadsheikhi/cfscanner?style=for-the-badge&logo=docker&label=Docker%20Pulls" alt="Docker Pulls">
+  </a>
+  <a href="https://hub.docker.com/r/ahmadsheikhi/cfscanner">
+    <img src="https://img.shields.io/docker/image-size/ahmadsheikhi/cfscanner/latest?style=for-the-badge&logo=docker&label=Image%20Size" alt="Docker Image Size">
+  </a>
+  <a href="https://github.com/ahmadsheikhi89/CFscanner-universal/tags">
+    <img src="https://img.shields.io/github/v/tag/ahmadsheikhi89/CFscanner-universal?style=for-the-badge&logo=github&label=Version" alt="Version">
+  </a>
+</p>
 
-## What Makes This Fork Special
-
-**Latest Xray-Core v26.2.6** - Updated to the newest version with all security patches and performance improvements
-
-**Modern TUI Interface** - Clean terminal interface with real-time statistics, worker status, and interactive controls
-
-**XHTTP (SplitHTTP) Optimized** - Specifically optimized for the latest XHTTP transport protocol for better CDN compatibility
-
-**Multi-threading Enhanced** - Proper multi-worker support with individual worker tracking and pause/resume functionality
-
-**Universal CDN Support** - Works with Cloudflare, Fastly, KeyCDN, and other major CDN providers to find clean IPs
-
-## Features
-
-- **Real-time TUI Dashboard** with live statistics
-- **Multi-threaded scanning** with individual worker status
-- **Pause/Resume functionality** with P key
-- **Multiple Protocols**: Native support for `vless`, `vmess`, and `trojan`
-- **Modern Transports**: Easily switch between `xhttp`, `ws`, and `grpc`
-- **Cross-platform builds** (Linux, Windows, macOS)
-- **Clean configuration management** with automatic cleanup
-- **Comprehensive logging** with success/failure tracking
-- **Progress tracking** with ETA calculations
-- **Universal CDN compatibility** for finding low latency IPs
-
-## Usage
-
-To see all available options:
-
-```bash
-./CFScanner -h
-```
-
-### Basic Examples
-
-```bash
-# Load configuration file and load subnet file for scanning
-./CFScanner --config config.real --subnets ips.txt
-
-# Load configuration file and use input cidr and begin scanning ips with 4 threads
-./CFScanner --config config.real --subnets 172.20.0.0/24 --threads 4
-
-# Load configurations file with subnet file and doing upload test
-./CFScanner --config config.real --subnets 172.20.0.0/24 --threads 4 --upload
-
-# Load configurations file with subnet file and testing each ip 3 times
-./CFScanner --config config.real --subnets 172.20.0.0/24 --threads 4 --tries 3
-
-# Load configurations file with subnet file and using vpn mode (recommanded)
-./CFScanner --config config.real --subnets 172.20.0.0/24 --vpn --test-url "http://google.com/generate_204" 
-```
-
-### Configuration
-
-Create a `config.json` file:
-
-```json
-{
-	"localPort": 10808,
-	"addressPort": "443",
-	"userId": "your-uuid-or-password",
-	"protocol": "vless",
-	"network": "xhttp",
-	"tls": true,
-	"wsHeaderHost": "your-server.example.com",
-	"wsHeaderPath": "/your-path",
-	"sni": "your-sni.example.com",
-	"frontingTimeout": 5.0,
-	"nTries": 1,
-	"writer": "csv"
-}
-```
-
-> **Note**: You can change `"protocol"` to `"vmess"` or `"trojan"`. When using Trojan, put your password in the `"userId"` field. You can set `"network"` to `"ws"`, `"grpc"` or `"xhttp"`.
-
-### TUI Controls
-
-- **P** - Pause/Resume scanning
-- **Q / Esc** - Quit scanner
-- **Ctrl+C** - Force quit
-
-## TUI Interface
-
-![CFScanner TUI Interface](assets/image.png)
-
-The TUI provides real-time monitoring with:
-
-- **Configuration Display** - Shows current settings in a compact format
-- **Live Progress** - Real-time scanning progress with ETA calculations
-- **Worker Status** - Individual worker threads with current IP being tested
-- **Activity Log** - Recent scan results with success/failure indicators
-- **Interactive Controls** - Pause/resume and quit functionality
-
-## Build from Source
-
-### Requirements
-
-- Go 1.25.7 or later
-- Git
-
-### Dependencies
-
-- **Xray-Core v26.2.6** - Latest version with XHTTP support
-- **Bubble Tea** - Modern TUI framework
-- **Lipgloss** - Terminal styling
-- **Cobra** - CLI framework
-
-### Build Process
-
-```bash
-# Clone repository
-git clone https://github.com/ArchNets/CDN-IP-Scanner.git
-cd CDN-IP-Scanner
-
-# Install dependencies
-go mod tidy
-
-# Build with optimization
-go build -o CFScanner -trimpath -ldflags "-s -w -buildid=" .
-
-# Cross-platform builds
-GOOS=windows GOARCH=amd64 go build -o CFScanner-windows.exe -trimpath -ldflags "-s -w -buildid=" .
-GOOS=darwin GOARCH=amd64 go build -o CFScanner-macos-intel -trimpath -ldflags "-s -w -buildid=" .
-GOOS=darwin GOARCH=arm64 go build -o CFScanner-macos-arm64 -trimpath -ldflags "-s -w -buildid=" .
-
-# Run
-./cfscanner -h
-```
-
-## Key Improvements Over Original
-
-1. **Modern Transport Protocols**
-   - XHTTP (SplitHTTP) as default transport
-   - Better CDN compatibility and detection resistance
-
-2. **Enhanced User Experience**
-   - Clean TUI with real-time updates
-   - Individual worker status tracking
-   - Interactive pause/resume functionality
-
-3. **Performance Optimizations**
-   - Efficient multi-threading without race conditions
-   - Optimized configuration file management
-   - Reduced memory footprint
-
-4. **Code Quality**
-   - Clean, maintainable codebase
-   - Proper error handling
-   - Comprehensive logging
-
-## CDN Compatibility
-
-This scanner works effectively with major CDN providers:
-
-- **Cloudflare** - Original target, fully tested
-- **Fastly** - Compatible with XHTTP transport
-- **KeyCDN** - Works with standard configurations
-- **AWS CloudFront** - Supports clean IP discovery
-- **Azure CDN** - Compatible with low latency scanning
-- **Google Cloud CDN** - Works with proper configuration
-
-## Contributing
-
-We welcome contributions! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## License
-
-This project is licensed under the GPL-3.0 License - see the [LICENSE](LICENSE) file for details.
-
-## Credits
-
-- **Original Project**: [CFScanner](https://github.com/MortezaBashsiz/CFScanner) by MortezaBashsiz
-- **Enhanced Fork**: Developed and maintained by **Arch Net Team**
-- **Xray-Core**: [XTLS Project](https://github.com/XTLS/Xray-core)
-
-## Links
-
-- [Original CFScanner](https://github.com/MortezaBashsiz/CFScanner/tree/main/golang)
-- [Xray-Core Documentation](https://xtls.github.io/)
-- [Transport Examples](vpn/TRANSPORT_EXAMPLES.md)
+<p align="center">
+  <img src="https://img.shields.io/badge/Linux-Supported-2ea44f?style=for-the-badge&logo=linux&logoColor=white" alt="Linux Supported">
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker Ready">
+  <img src="https://img.shields.io/badge/Go-1.25+-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go Version">
+  <img src="https://img.shields.io/badge/Xray-Core-orange?style=for-the-badge" alt="Xray Core">
+  <img src="https://img.shields.io/badge/Cloudflare-IP%20Scanner-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare Scanner">
+</p>
 
 ---
 
-**Note**: This scanner is designed to find clean IPs with low latency across various CDN providers. Always ensure you comply with the terms of service of the services you're testing.
+## Overview
+
+**CFScanner Universal** is a portable Docker-based scanner for discovering working Cloudflare IPs using existing **VLESS**, **VMess**, or **Trojan** configurations.
+
+Paste a proxy share link, select a scan mode, and the scanner will:
+
+- Generate candidates from bundled Cloudflare IPv4 ranges
+- Test connectivity through the supplied proxy configuration
+- Discover working IPs
+- Rank results by latency
+- Persist scan state
+- Export ready-to-import client links
+
+---
+
+## Quick Start
+
+Run the latest version:
+
+```bash
+docker run --rm -it \
+  -v cfscanner-data:/data \
+  ahmadsheikhi/cfscanner:latest
+```
+
+Run the stable `1.0.0` release:
+
+```bash
+docker run --rm -it \
+  -v cfscanner-data:/data \
+  ahmadsheikhi/cfscanner:1.0.0
+```
+
+Docker Hub:
+
+https://hub.docker.com/r/ahmadsheikhi/cfscanner
+
+---
+
+## Features
+
+- Interactive CLI menu
+- VLESS configuration parsing
+- VMess configuration parsing
+- Trojan configuration parsing
+- Cloudflare IPv4 range scanning
+- Quick / Standard / Deep scan profiles
+- Custom scan mode
+- Custom IP list support
+- Persistent scan state
+- Duplicate candidate avoidance
+- Latency-based result ranking
+- Client-ready proxy link export
+- Docker volume persistence
+- Built-in Cloudflare CIDR list
+- Full local data reset
+
+---
+
+## How It Works
+
+```mermaid
+flowchart TD
+    A["Paste Proxy Config"] --> B["Parse VLESS / VMess / Trojan"]
+    B --> C{"Select Scan Mode"}
+
+    C -->|Quick| D["Target: 20 Working IPs"]
+    C -->|Standard| E["Target: 50 Working IPs"]
+    C -->|Deep| F["Target: 100 Working IPs"]
+    C -->|Custom| G["Custom Target / Batch / Threads"]
+
+    D --> H["Generate Cloudflare IPv4 Candidates"]
+    E --> H
+    F --> H
+    G --> H
+
+    H --> I["Xray Connectivity Test"]
+    I --> J["Collect Working IPs"]
+    J --> K["Rank by Latency"]
+    K --> L["Export Client Links"]
+```
+
+---
+
+## Interactive CLI
+
+```text
+╔════════════════════════════════════════════════════╗
+║ CFScanner Universal                                ║
+║                                                    ║
+║ VLESS / VMess / Trojan / Cloudflare                ║
+║                                                    ║
+║ Learned from: Morteza Bashsiz / CFScanner          ║
+║ Extended by : Ahmad Sheikhi                        ║
+║ Senior Platform / DevOps Engineer                  ║
+╚════════════════════════════════════════════════════╝
+
+ Cloudflare IPv4 Ranges: 15 CIDRs
+
+ [1] Paste Proxy Config
+ [2] Quick Scan       - Find 20 Working IPs
+ [3] Standard Scan    - Find 50 Working IPs
+ [4] Deep Scan        - Find 100 Working IPs
+ [5] Custom Scan
+ [6] Show Top Results
+ [7] Export Client Links
+ [8] Scan Custom IP List
+ [9] Reset All Data
+ [10] Show Cloudflare Ranges
+ [0] Exit
+```
+
+---
+
+## Scan Modes
+
+| Mode | Target | Default Batch |
+|---|---:|---:|
+| Quick | 20 working IPs | 50 |
+| Standard | 50 working IPs | 100 |
+| Deep | 100 working IPs | 200 |
+| Custom | User defined | User defined |
+
+Batch size is reduced automatically when the scan approaches its target to avoid unnecessary scanning.
+
+---
+
+## Supported Proxy Configs
+
+Paste a standard proxy share link directly into the CLI:
+
+```text
+vless://...
+vmess://...
+trojan://...
+```
+
+Supported transports include:
+
+```text
+ws
+grpc
+xhttp
+```
+
+---
+
+## Cloudflare IPv4 Ranges
+
+The image includes the Cloudflare IPv4 CIDRs used for candidate generation.
+
+Current bundled list:
+
+```text
+173.245.48.0/20
+103.21.244.0/22
+103.22.200.0/22
+103.31.4.0/22
+141.101.64.0/18
+108.162.192.0/18
+190.93.240.0/20
+188.114.96.0/20
+197.234.240.0/22
+198.41.128.0/17
+162.158.0.0/15
+104.16.0.0/13
+104.24.0.0/14
+172.64.0.0/13
+131.0.72.0/22
+```
+
+The list can also be displayed from the application:
+
+```text
+[10] Show Cloudflare Ranges
+```
+
+Source file:
+
+```text
+assets/cf.local.iplist
+```
+
+---
+
+## Persistent Data
+
+Runtime state is stored under:
+
+```text
+/data
+```
+
+The recommended Docker volume:
+
+```bash
+-v cfscanner-data:/data
+```
+
+keeps configuration, scan state, and results between container runs.
+
+To remove all saved state:
+
+```text
+[9] Reset All Data
+```
+
+---
+
+## Output Files
+
+Quick Scan example:
+
+```text
+/data/top20.txt
+/data/top20-ranked.txt
+/data/top20-links.txt
+```
+
+Standard Scan example:
+
+```text
+/data/top50.txt
+/data/top50-ranked.txt
+/data/top50-links.txt
+```
+
+Deep Scan example:
+
+```text
+/data/top100.txt
+/data/top100-ranked.txt
+/data/top100-links.txt
+```
+
+### Result Types
+
+`top20.txt`
+
+```text
+104.24.x.x
+104.16.x.x
+104.27.x.x
+```
+
+`top20-ranked.txt`
+
+```text
+1051 104.24.x.x
+1076 104.16.x.x
+1092 104.27.x.x
+```
+
+`top20-links.txt`
+
+Contains ready-to-import VLESS / VMess / Trojan client links using the discovered Cloudflare IPs.
+
+---
+
+## Docker Images
+
+Latest stable:
+
+```text
+ahmadsheikhi/cfscanner:latest
+```
+
+Versioned release:
+
+```text
+ahmadsheikhi/cfscanner:1.0.0
+```
+
+Pull manually:
+
+```bash
+docker pull ahmadsheikhi/cfscanner:latest
+```
+
+---
+
+## Repository Structure
+
+```text
+.
+├── assets/
+│   ├── banner.png
+│   └── cf.local.iplist
+├── configuration/
+├── docker/
+│   └── entrypoint.sh
+├── logger/
+├── scanner/
+├── speedtest/
+├── tui/
+├── utils/
+├── vpn/
+├── Dockerfile
+├── go.mod
+├── go.sum
+└── README.md
+```
+
+---
+
+## Build From Source
+
+```bash
+git clone https://github.com/ahmadsheikhi89/CFscanner-universal.git
+
+cd CFscanner-universal
+
+docker build \
+  -t cfscanner-local \
+  .
+```
+
+Run:
+
+```bash
+docker run --rm -it \
+  -v cfscanner-data:/data \
+  cfscanner-local
+```
+
+---
 
 ## Acknowledgments
 
 This project builds on the work and experience of the open-source community.
 
-- The current scanner engine is derived from **ArchNets/CDN-IP-Scanner**.
-- I originally learned the Cloudflare IP scanning approach from **Morteza Bashsiz and the CFScanner project**.
+The current scanner engine is derived from:
+
+**ArchNets / CDN-IP-Scanner**
+
+I originally learned the Cloudflare IP scanning approach from:
+
+**Morteza Bashsiz / CFScanner**
 
 CFScanner Universal extends that experience with:
 
 - Portable Docker deployment
-- Interactive CLI workflow
-- VLESS / VMess / Trojan configuration support
-- Automated Cloudflare IP batch scanning
+- Interactive proxy configuration
+- VLESS / VMess / Trojan support
+- Automated Cloudflare candidate generation
+- Batch scanning
 - Persistent scan state
 - Latency-based ranking
 - Client-ready proxy link export
 
-Developed and maintained by:
+---
+
+## Maintainer
 
 **Ahmad Sheikhi**  
 Senior Platform / DevOps Engineer
+
+GitHub:
+
+https://github.com/ahmadsheikhi89
+
+Docker Hub:
+
+https://hub.docker.com/u/ahmadsheikhi
+
+---
+
+## Disclaimer
+
+Use this software only on networks and services you are authorized to test.
+
+Users are responsible for complying with applicable laws, service terms, and network policies.
